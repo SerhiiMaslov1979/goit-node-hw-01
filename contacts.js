@@ -16,7 +16,7 @@ async function writeFile(contacts) {
 
 async function getContactById(contactId) {
   const contacts = await listContacts();
-  const contact = contacts.find((contact) => contact.id === id);
+  const contact = contacts.find((contact) => contact.id === contactId);
   return contact;
 }
 
@@ -28,16 +28,26 @@ async function removeContact(contactId) {
   const updatedContacts = contacts.filter(
     (contact) => contact.id !== contactId
   );
-  await fs.writeFile(contactsPath, JSON.stringify(updatedContacts));
+
+  const contactsJSON = JSON.stringify(updatedContacts, null, 2);
+  await fs.writeFile(contactsPath, contactsJSON);
 
   return removedContact;
 }
 
 async function addContact(name, email, phone) {
   const contacts = await listContacts();
-  const newContact = { id: Date.now(), name, email, phone };
+  const newContact = {
+    id: nanoid(), // Генерація ідентифікатора за допомогою nanoid()
+    name,
+    email,
+    phone,
+  };
   contacts.push(newContact);
-  await fs.writeFile(contactsPath, JSON.stringify(contacts));
+
+  const contactsJSON = JSON.stringify(contacts, null, 2);
+  await fs.writeFile(contactsPath, contactsJSON);
+
   return newContact;
 }
 
